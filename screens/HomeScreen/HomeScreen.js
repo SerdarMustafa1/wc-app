@@ -6,6 +6,7 @@ import Firebase from "../../Firebase";
 import loc from "../../utils/localization";
 import { styles } from "./HomeScreen.styles";
 import Logo from "../../images/wc.jpg";
+import Map from "../../components/MapComponents/Map";
 
 const HomeScreen = () => {
   const { currentUser } = Firebase.auth();
@@ -42,6 +43,7 @@ const HomeScreen = () => {
         </View>
       </View>
       <Image source={Logo} style={{ margin: 30 }} />
+      <Map />
       <View style={styles.box}>
         <Paragraph></Paragraph>
       </View>
