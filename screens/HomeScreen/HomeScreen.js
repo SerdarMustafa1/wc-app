@@ -12,11 +12,12 @@ import Firebase from "../../Firebase";
 import loc from "../../utils/localization";
 import { styles } from "./HomeScreen.styles";
 import Logo from "../../images/wc.jpg";
-import Map from "../../components/MapComponents/Map";
+import { OpenStreetMapScreen } from "../../components/MapComponents/OSM";
+import { LocationContextProvider } from "../../context/locationContext";
 
 const HomeScreen = () => {
   const { currentUser } = Firebase.auth();
-  console.log(currentUser);
+  // console.log(currentUser);
   //const signOutUser = () => Firebase.auth().signOut();
   //const { userProfile } = useContext(mainContext);
   const { signOutUser } = useContext(mainContext);
@@ -25,57 +26,61 @@ const HomeScreen = () => {
   // console.log(mainContext);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView centerContent>
-        <View style={styles.container}>
-          <View style={styles.box}>
-            <View
-              style={{
-                display: "flex",
-                alignContent: "center",
-                flexDirection: "row",
-              }}
-            >
-              <Title>Welcome, {currentUser?.displayName}</Title>
-              <Image
+    <LocationContextProvider>
+      <SafeAreaView style={styles.container}>
+        <ScrollView centerContent>
+          <View style={styles.container}>
+            <View style={styles.box}>
+              <View
                 style={{
-                  marginHorizontal: 10,
-                  height: 40,
-                  width: 40,
-                  borderRadius: 30,
+                  display: "flex",
+                  alignContent: "center",
+                  flexDirection: "row",
                 }}
-                source={{
-                  uri: currentUser.photoURL,
-                }}
-              />
+              >
+                <Title>Welcome, {currentUser?.displayName}</Title>
+                <Image
+                  style={{
+                    marginHorizontal: 10,
+                    height: 40,
+                    width: 40,
+                    borderRadius: 30,
+                  }}
+                  source={{
+                    uri: currentUser.photoURL,
+                  }}
+                />
+              </View>
+            </View>
+            <Image source={Logo} style={{ margin: 30 }} />
+
+            <OpenStreetMapScreen />
+
+            <View style={styles.box}>
+              <Paragraph></Paragraph>
+            </View>
+            <View style={styles.box}>
+              <Button
+                onPress={() => signOutUser()}
+                mode="contained"
+                icon="logout"
+              >
+                {loc.t("signout")}
+              </Button>
+            </View>
+            <View style={styles.box}>
+              <Button
+                onPress={() => inHome()}
+                icon="theme-light-dark"
+                mode="contained"
+              >
+                {loc.t("theme")}
+              </Button>
             </View>
           </View>
-          <Image source={Logo} style={{ margin: 30 }} />
-          <Map />
-          <View style={styles.box}>
-            <Paragraph></Paragraph>
-          </View>
-          <View style={styles.box}>
-            <Button
-              onPress={() => signOutUser()}
-              mode="contained"
-              icon="logout"
-            >
-              {loc.t("signout")}
-            </Button>
-          </View>
-          <View style={styles.box}>
-            <Button
-              onPress={() => inHome()}
-              icon="theme-light-dark"
-              mode="contained"
-            >
-              {loc.t("theme")}
-            </Button>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </LocationContextProvider>
   );
 };
 

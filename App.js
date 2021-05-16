@@ -65,6 +65,7 @@ const App = ({ navigation }) => {
       setIsLoading(false);
       setUserProfile(user);
     });
+    // console.log("vdlsvldskvkl", user);
     return authListener;
   }, []);
 
@@ -140,6 +141,8 @@ const App = ({ navigation }) => {
       </View>
     );
   }
+
+  console.log("is user logged in?", userLogged);
 
   return (
     <mainContext.Provider value={mainC}>
