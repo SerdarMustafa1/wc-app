@@ -24,6 +24,12 @@ export const OpenStreetMapScreen = () => {
     latitudeDelta: LATITUDE_DELTA,
     longitudeDelta: LONGITUDE_DELTA,
   });
+  const [boundingBox, setBoundingBox] = useState({
+    westLng: 0,
+    southLat: 0,
+    eastLng: 0,
+    northLat: 0,
+  });
   const [osmData, setOsmData] = useState([]);
 
   const contextLatitude = location?.coords?.latitude;
@@ -31,7 +37,6 @@ export const OpenStreetMapScreen = () => {
 
   useEffect(() => {
     if (location?.coords) {
-      console.log("qregion", region);
       setRegion({
         latitude: contextLatitude,
         longitude: contextLongitude,
@@ -41,21 +46,41 @@ export const OpenStreetMapScreen = () => {
     }
   }, [location?.coords]);
 
+  const getBoundingBox = (region) => {
+    let boundingBox = {
+      westLng: region.longitude - region.longitudeDelta / 2, // westLng - min lng
+      southLat: region.latitude - region.latitudeDelta / 2, // southLat - min lat
+      eastLng: region.longitude + region.longitudeDelta / 2, // eastLng - max lng
+      northLat: region.latitude + region.latitudeDelta / 2, // northLat - max lat
+    };
+
+    return boundingBox;
+  };
+
+  const onRegionChangeComplete = (region) => {
+    let boundingBox = getBoundingBox(region);
+
+    setRegion(region);
+    setBoundingBox(boundingBox);
+  };
+
   const fetchOsmData = async () => {
+    const coordString = Object.values(boundingBox).join(",");
     try {
       const response = await queryOverpass(`
       [out:json][timeout:25];
       node ["amenity"="toilets"]
-      (51.49439676718,-0.14638423919678,51.519986109502,-0.12526988983154);
+      (${coordString});
       out body;
     `);
+      console.log("my response ", response);
       setOsmData(response);
     } catch (error) {
       console.log("query error", response);
     }
   };
 
-  // console.log("test data ", osmData);
+  console.log("osm data ", osmData);
 
   useEffect(() => {
     fetchOsmData();
@@ -86,7 +111,7 @@ export const OpenStreetMapScreen = () => {
           ref={_map}
           showsMyLocationButton
           region={region}
-          onRegionChangeComplete={(region) => setRegion(region)}
+          onRegionChangeComplete={() => onRegionChangeComplete(region)}
           provider={PROVIDER_GOOGLE}
           mapType={MAP_TYPES.STANDARD}
           rotateEnabled={false}

@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
   View,
   StyleSheet,
+  Appearance,
   Image,
+  TextInput,
 } from "react-native";
 import { Text, Button, Title, Paragraph } from "react-native-paper";
 import mainContext from "../../context/mainContext";
@@ -14,6 +16,7 @@ import { styles } from "./HomeScreen.styles";
 import Logo from "../../images/wc.jpg";
 import { OpenStreetMapScreen } from "../../components/MapComponents/OSM";
 import { LocationContextProvider } from "../../context/locationContext";
+import { useTheme } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const { currentUser } = Firebase.auth();
@@ -23,7 +26,13 @@ const HomeScreen = () => {
   const { signOutUser } = useContext(mainContext);
   const { inHome } = useContext(mainContext);
 
+  const [value, onChangeText] = useState("Useless Placeholder");
+
   // console.log(mainContext);
+  // const { colors, dark } = useTheme();
+  // console.log("useTheme", dark);
+
+  // console.log("testing me", Appearance.getColorScheme());
 
   return (
     <LocationContextProvider>
@@ -53,7 +62,14 @@ const HomeScreen = () => {
               </View>
             </View>
             <Image source={Logo} style={{ margin: 30 }} />
-
+            <TextInput
+              autoCorrect
+              autoFocus
+              placeholder="Search  here"
+              style={[{ height: 40, borderColor: "gray", borderWidth: 1 }]}
+              onChangeText={(text) => onChangeText(text)}
+              value={value}
+            />
             <OpenStreetMapScreen />
 
             <View style={styles.box}>
