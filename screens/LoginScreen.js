@@ -4,12 +4,13 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import Firebase from "../Firebase";
 import { TextInput, Button } from "react-native-paper";
 import loc from "../utils/localization";
 import mainContext from "../context/mainContext";
-
+import Logo from "../images/logo.png";
 const LoginScreen = ({ navigation }) => {
   const { handleGLogin } = useContext(mainContext);
   const { handleLogin } = useContext(mainContext);
@@ -18,6 +19,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        <Image source={Logo} style={{ margin: 30 }} width={300} height={200} />
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Email address"

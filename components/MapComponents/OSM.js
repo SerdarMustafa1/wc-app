@@ -15,6 +15,8 @@ export const OpenStreetMapScreen = () => {
   const { location } = useContext(LocationContext);
   const _map = useRef(null);
 
+  console.log("location", location);
+
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 

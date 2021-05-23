@@ -8,6 +8,7 @@ import { OpenStreetMapScreen } from "../../components/MapComponents/OSM";
 import { LocationContextProvider } from "../../context/locationContext";
 import { useTheme } from "@react-navigation/native";
 import ActionMenu from "../../components/Menus/mainMenu";
+import CityContainer from "../../components/CityContainer/CityContainer";
 
 const HomeScreen = () => {
   // console.log(currentUser);
@@ -37,7 +38,7 @@ const HomeScreen = () => {
                 }}
               ></View>
             </View>
-            {/* <Image source={Logo} style={{ margin: 30 }} /> */}
+
             <TextInput
               autoCorrect
               autoFocus
@@ -58,7 +59,7 @@ const HomeScreen = () => {
             <OpenStreetMapScreen />
 
             <View style={styles.box}>
-              <Paragraph></Paragraph>
+              <CityContainer />
             </View>
           </View>
         </ScrollView>
