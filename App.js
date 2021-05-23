@@ -17,7 +17,9 @@ import {
   Provider as PaperProvider,
   ActivityIndicator,
 } from "react-native-paper";
-
+import { Container, Text } from "native-base";
+import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
 import mainContext from "./context/mainContext";
 
 //console.log(i18n.locale);
@@ -56,8 +58,22 @@ const App = ({ navigation }) => {
   const [userLogged, setUserLogged] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setReady] = useState(false);
 
   const theme = isDarkTheme ? CombinedDarkTheme : CombinedDefaultTheme;
+
+  const nativeBase = async () => {
+    await Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+      ...Ionicons.font,
+    });
+  };
+
+  useEffect(() => {
+    nativeBase();
+    setReady(true);
+  });
 
   useEffect(() => {
     const authListener = Firebase.auth().onAuthStateChanged((user) => {
@@ -142,7 +158,7 @@ const App = ({ navigation }) => {
     );
   }
 
-  console.log("is user logged in?", userLogged);
+  // console.log("is user logged in?", userLogged);
 
   return (
     <mainContext.Provider value={mainC}>
