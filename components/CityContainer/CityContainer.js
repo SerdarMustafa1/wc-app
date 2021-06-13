@@ -1,12 +1,13 @@
 import React from "react";
 import { Text, View } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const CityContainer = () => {
   const searchOptions = [
     {
       id: 1,
       name: "closest",
-      icon: "",
+      icon: "rocket",
       action: "",
     },
     {
@@ -43,20 +44,24 @@ const CityContainer = () => {
       </Text>
 
       <View style={{ display: "flex", flexDirection: "row" }}>
-        {searchOptions?.map((user) => (
-          <View
-            key={user.name}
-            style={{
-              margin: 8,
-              padding: 8,
-              border: "1px solid black",
-              borderRadius: "10px",
-              backgroundColor: "lightgray",
-            }}
-          >
-            <Text>{user.name}</Text>
-          </View>
-        ))}
+        {searchOptions?.map((user, idx) => {
+          return (
+            <View
+              key={user.name}
+              style={{
+                margin: 8,
+                padding: 8,
+                border: "1px solid black",
+                borderRadius: "10px",
+                backgroundColor: "lightgray",
+              }}
+            >
+              <Text>{user.name}</Text>
+
+              <Icon name={user.icon} />
+            </View>
+          );
+        })}
       </View>
     </View>
   );
