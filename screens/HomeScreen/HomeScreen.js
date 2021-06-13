@@ -15,7 +15,7 @@ const HomeScreen = () => {
   //const signOutUser = () => Firebase.auth().signOut();
   //const { userProfile } = useContext(mainContext);
 
-  const [value, onChangeText] = useState("Search...");
+  const [value, onChangeText] = useState("");
 
   // console.log(mainContext);
   // const { colors, dark } = useTheme();

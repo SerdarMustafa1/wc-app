@@ -7,25 +7,13 @@ import queryOverpass from "@derhuerst/query-overpass";
 import { CustomMarker } from "./CustomMarker";
 import { LocationContext } from "../../context/locationContext";
 
-const { width, height } = Dimensions.get("window");
-
-const ASPECT_RATIO = width / height;
+// const { width, height } = Dimensions.get("window");
 
 export const OpenStreetMapScreen = () => {
-  const { location } = useContext(LocationContext);
+  const { region, setRegion, location, hasLocationPermissions } =
+    useContext(LocationContext);
   const _map = useRef(null);
 
-  console.log("location", location);
-
-  const LATITUDE_DELTA = 0.0922;
-  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-  const [region, setRegion] = useState({
-    latitude: 51.510357,
-    longitude: -0.116773,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA,
-  });
   const [boundingBox, setBoundingBox] = useState({
     westLng: 0,
     southLat: 0,
@@ -33,61 +21,103 @@ export const OpenStreetMapScreen = () => {
     northLat: 0,
   });
   const [osmData, setOsmData] = useState([]);
+  const [ready, setReady] = useState(true);
 
-  const contextLatitude = location?.coords?.latitude;
-  const contextLongitude = location?.coords?.longitude;
+  // console.log("my region --", region);
 
-  useEffect(() => {
-    if (location?.coords) {
-      setRegion({
-        latitude: contextLatitude,
-        longitude: contextLongitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      });
-    }
-  }, [location?.coords]);
-
-  const getBoundingBox = (region) => {
-    let boundingBox = {
-      westLng: region.longitude - region.longitudeDelta / 2, // westLng - min lng
-      southLat: region.latitude - region.latitudeDelta / 2, // southLat - min lat
-      eastLng: region.longitude + region.longitudeDelta / 2, // eastLng - max lng
-      northLat: region.latitude + region.latitudeDelta / 2, // northLat - max lat
+  const getBoundingBox = async (region, scale = 1) => {
+    /*
+     * Latitude : max/min +90 to -90
+     * Longitude : max/min +180 to -180
+     */
+    // Of course we can do it mo compact but it wait is more obvious
+    const calcMinLatByOffset = (lng, offset) => {
+      const factValue = lng - offset;
+      if (factValue < -90) {
+        return (90 + offset) * -1;
+      }
+      return factValue;
     };
 
-    return boundingBox;
+    const calcMaxLatByOffset = (lng, offset) => {
+      const factValue = lng + offset;
+      if (90 < factValue) {
+        return (90 - offset) * -1;
+      }
+      return factValue;
+    };
+
+    const calcMinLngByOffset = (lng, offset) => {
+      const factValue = lng - offset;
+      if (factValue < -180) {
+        return (180 + offset) * -1;
+      }
+      return factValue;
+    };
+
+    const calcMaxLngByOffset = (lng, offset) => {
+      const factValue = lng + offset;
+      if (180 < factValue) {
+        return (180 - offset) * -1;
+      }
+      return factValue;
+    };
+
+    const latOffset = (region.latitudeDelta / 2) * scale;
+    const lngD =
+      region.longitudeDelta < -180
+        ? 360 + region.longitudeDelta
+        : region.longitudeDelta;
+    const lngOffset = (lngD / 2) * scale;
+
+    return {
+      minLat: calcMinLatByOffset(region.latitude, latOffset), // southLat - min lat
+      minLng: calcMinLngByOffset(region.longitude, lngOffset), // westLng - min lng
+      maxLat: calcMaxLatByOffset(region.latitude, latOffset), // northLat - max lat
+      maxLng: calcMaxLngByOffset(region.longitude, lngOffset), // eastLng - max lng
+    };
   };
 
-  const onRegionChangeComplete = (region) => {
-    let boundingBox = getBoundingBox(region);
-
-    setRegion(region);
+  const onRegionChangeComplete = async (region) => {
+    let boundingBox = await getBoundingBox(region);
+    if (ready) {
+      setRegion(region);
+    }
     setBoundingBox(boundingBox);
   };
 
   const fetchOsmData = async () => {
     const coordString = Object.values(boundingBox).join(",");
+
     try {
       const response = await queryOverpass(`
-      [out:json][timeout:25];
-      node ["amenity"="toilets"]
-      (${coordString});
-      out body;
-    `);
-      console.log("my response ", response);
-      setOsmData(response);
+           [out:json][timeout:25];
+        node
+          [amenity=toilets]
+          (${coordString});
+        out body;
+      `);
+      if (response) {
+        console.log("query response", response);
+        setOsmData(response);
+        return;
+      }
     } catch (error) {
-      console.log("query error", response);
+      console.log("query error", error);
     }
   };
 
-  console.log("osm data ", osmData);
+  const onMapReady = (e) => {
+    if (!ready) {
+      setReady(true);
+    }
+  };
 
   useEffect(() => {
     fetchOsmData();
-  }, []);
+  }, [region]);
 
+  console.log("osm data ", osmData);
   const mapMarkers = () => {
     return osmData?.map((loc) => (
       <Marker
@@ -98,30 +128,45 @@ export const OpenStreetMapScreen = () => {
         title={loc.tags?.amenity}
         description={loc.tags?.description}
       >
-        <CustomMarker text={loc.tags?.description} />
+        {/* <CustomMarker text={loc.tags?.description} /> */}
       </Marker>
     ));
   };
 
+  if (location === null) {
+    return <Text>Finding your current location...</Text>;
+  }
+
+  if (hasLocationPermissions === false) {
+    return <Text>Location permissions are not granted.</Text>;
+  }
+
+  if (region === null) {
+    return <Text>Map region doesn't exist.</Text>;
+  }
+
   return (
     <>
-      <View>
-        <View style={{ alignItems: "center", justifyContent: "center" }}></View>
-      </View>
-      <View>
+      <View style={styles.wrapper}>
         <MapView
           ref={_map}
           showsMyLocationButton
+          onMapReady={onMapReady}
           region={region}
-          onRegionChangeComplete={() => onRegionChangeComplete(region)}
+          initialRegion={{
+            latitude: 39.97343096953564,
+            latitudeDelta: 0.0922,
+            longitude: -75.12520805829233,
+            longitudeDelta: 0.0421,
+          }}
+          // onRegionChange={(region) => setRegion(region)}
+          onRegionChangeComplete={(region) => onRegionChangeComplete(region)}
           provider={PROVIDER_GOOGLE}
-          mapType={MAP_TYPES.STANDARD}
-          rotateEnabled={false}
+          // mapType={MAP_TYPES.STANDARD}
           style={styles.map}
           zoom={1}
           followsUserLocation
           showsUserLocation
-          showsCompass
           zoomEnabled
           showsIndoors
           multiTouchControls
@@ -137,7 +182,15 @@ export const OpenStreetMapScreen = () => {
 
 const styles = StyleSheet.create({
   map: {
-    width: 400,
-    height: 500,
+    // display: "flex",
+    // alignContent: "center",
+    // justifyContent: "center",
+    width: 300,
+    height: 400,
+  },
+  wrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

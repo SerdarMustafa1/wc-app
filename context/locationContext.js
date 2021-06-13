@@ -1,21 +1,49 @@
 import React, { useState, useEffect, createContext } from "react";
-import { Platform, Text, View, StyleSheet } from "react-native";
+import { Platform, Text, View, StyleSheet, Dimensions } from "react-native";
 import * as Location from "expo-location";
 
 const LocationContext = createContext({});
 
+const { width, height } = Dimensions.get("window");
+
+const ASPECT_RATIO = width / height;
+
 const LocationContextProvider = ({ children }) => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [region, setRegion] = useState(null);
+  const [hasLocationPermissions, setLocationPermission] = useState(false);
+
+  const LATITUDE_DELTA = 0.0922;
+  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+  const contextLatitude = location?.coords?.latitude;
+  const contextLongitude = location?.coords?.longitude;
 
   useEffect(() => {
     getLocation();
   }, []);
 
+  useEffect(() => {
+    if (location?.coords) {
+      setRegion({
+        latitude: contextLatitude,
+        longitude: contextLongitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      });
+    }
+  }, [location?.coords]);
+
   const getLocation = async () => {
     try {
       const { granted } = await Location.requestPermissionsAsync();
-      if (!granted) return;
+      if (!granted) {
+        return;
+      } else {
+        setLocationPermission(true);
+      }
+
       const last = await Location.getLastKnownPositionAsync();
       if (last) setLocation(last);
       else {
@@ -30,6 +58,8 @@ const LocationContextProvider = ({ children }) => {
     }
   };
 
+  // console.log("location ---", location?.coords);
+
   return (
     <LocationContext.Provider
       value={{
@@ -37,6 +67,9 @@ const LocationContextProvider = ({ children }) => {
         setLocation,
         errorMsg,
         setErrorMsg,
+        region,
+        setRegion,
+        hasLocationPermissions,
       }}
     >
       {children}
