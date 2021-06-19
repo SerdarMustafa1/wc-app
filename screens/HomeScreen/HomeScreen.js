@@ -26,43 +26,21 @@ const HomeScreen = () => {
   return (
     <LocationContextProvider>
       <SafeAreaView style={styles.container}>
-        <ScrollView centerContent>
-          <View style={styles.container}>
-            <View style={styles.box}>
-              <ActionMenu />
-              <View
-                style={{
-                  display: "flex",
-                  alignContent: "center",
-                  flexDirection: "row",
-                }}
-              ></View>
-            </View>
-
-            <TextInput
-              autoCorrect
-              autoFocus
-              placeholder="Search  here"
-              style={[
-                {
-                  padding: 10,
-                  margin: 20,
-                  width: 200,
-                  height: 40,
-                  borderColor: "gray",
-                  borderWidth: 1,
-                },
-              ]}
-              onChangeText={(text) => onChangeText(text)}
-              value={value}
-            />
-            <OpenStreetMapScreen />
-
-            <View style={styles.box}>
-              <CityContainer />
-            </View>
-          </View>
-        </ScrollView>
+        <View style={styles.box}>
+          <ActionMenu />
+          <TextInput
+            autoCorrect
+            // autoFocus
+            placeholder="Search  here"
+            style={styles.textInput}
+            onChangeText={(text) => onChangeText(text)}
+            value={value}
+          />
+          <OpenStreetMapScreen />
+        </View>
+        <View style={styles.box}>
+          <CityContainer />
+        </View>
       </SafeAreaView>
     </LocationContextProvider>
   );

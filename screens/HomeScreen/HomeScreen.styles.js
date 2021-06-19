@@ -1,17 +1,23 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  inputContainer: {
-    width: "80%",
-    marginBottom: 20,
-  },
   container: {
     flex: 1,
-    //backgroundColor: '#fff',
+    // backgroundColor: "blue",
     alignItems: "center",
     justifyContent: "center",
   },
   box: {
-    marginBottom: 20,
+    // backgroundColor: "pink",
+    alignItems: "center",
+    flex: 1,
+  },
+  textInput: {
+    padding: 10,
+    margin: 10,
+    width: 200,
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
   },
 });

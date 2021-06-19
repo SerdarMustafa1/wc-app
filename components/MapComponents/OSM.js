@@ -98,7 +98,7 @@ export const OpenStreetMapScreen = () => {
         out body;
       `);
       if (response) {
-        console.log("query response", response);
+        // console.log("query response", response);
         setOsmData(response);
         return;
       }
@@ -117,7 +117,7 @@ export const OpenStreetMapScreen = () => {
     fetchOsmData();
   }, [region]);
 
-  console.log("osm data ", osmData);
+  // console.log("osm data ", osmData);
   const mapMarkers = () => {
     return osmData?.map((loc) => (
       <Marker
@@ -186,11 +186,14 @@ const styles = StyleSheet.create({
     // alignContent: "center",
     // justifyContent: "center",
     width: 300,
-    height: 400,
+    // height: 400,
+    flex: 1,
   },
   wrapper: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
   },
 });
