@@ -10,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import ActionMenu from "../../components/Menus/mainMenu";
 import CityContainer from "../../components/CityContainer/CityContainer";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   // console.log(currentUser);
   //const signOutUser = () => Firebase.auth().signOut();
   //const { userProfile } = useContext(mainContext);

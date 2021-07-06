@@ -1,36 +1,55 @@
-import React from "react";
-import { Fragment } from "react";
+import React, { useContext, useEffect } from "react";
+
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { FlatGrid } from "react-native-super-grid";
+import { LocationContext } from "../../context/locationContext";
+import { useState } from "react";
+
+const searchOptions = [
+  {
+    id: 1,
+    name: "closest",
+    icon: "rocket",
+    action: "",
+  },
+  {
+    id: 2,
+    name: "family",
+    icon: "user",
+    action: "",
+  },
+  {
+    id: 3,
+    name: "accessible",
+    icon: "wheelchair",
+    action: "",
+  },
+  {
+    id: 4,
+    name: "general",
+    icon: "child",
+    action: "",
+  },
+];
 
 const CityContainer = () => {
-  const searchOptions = [
-    {
-      id: 1,
-      name: "closest",
-      icon: "rocket",
-      action: "",
-    },
-    {
-      id: 2,
-      name: "family",
-      icon: "user",
-      action: "",
-    },
-    {
-      id: 3,
-      name: "accessible",
-      icon: "wheelchair",
-      action: "",
-    },
-    {
-      id: 4,
-      name: "general",
-      icon: "child",
-      action: "",
-    },
-  ];
+  const { city } = useContext(LocationContext);
+
+  useEffect(() => {
+    console.log("city 1", city);
+    getCity();
+
+    console.log("city 2", city);
+  }, [city]);
+
+  const getCity = (city) => {
+    if (city) {
+      return <Text style={styles.text}>{city}</Text>;
+    } else {
+      return <Text style={styles.text}>{"Searching for city..."}</Text>;
+    }
+  };
 
   const renderItem = ({ item }) => {
     return (
@@ -54,7 +73,7 @@ const CityContainer = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>City Name</Text>
+      {getCity()}
       <Text style={styles.smallText}>What are you looking for?</Text>
 
       <FlatGrid
@@ -95,7 +114,7 @@ const styles = StyleSheet.create({
   smallText: {
     display: "flex",
     marginTop: 8,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "normal",
     textTransform: "capitalize",
   },

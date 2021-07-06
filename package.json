@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@ant-design/icons-react-native": "^2.3.1",
     "@derhuerst/query-overpass": "^2.0.0",
     "@expo/react-native-action-sheet": "^3.9.0",
     "@material-ui/icons": "^4.11.2",
@@ -16,6 +17,7 @@
     "@react-navigation/material-bottom-tabs": "^5.2.14",
     "@react-navigation/native": "^5.7.1",
     "@react-navigation/stack": "^5.8.0",
+    "axios": "^0.21.1",
     "expo": "~38.0.8",
     "expo-font": "~8.2.1",
     "expo-google-app-auth": "^8.1.7",
@@ -30,6 +32,7 @@
     "react-dom": "~16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
     "react-native-gesture-handler": "~1.6.0",
+    "react-native-grid-component": "^2.0.1",
     "react-native-grid-list": "^1.1.0",
     "react-native-maps": "0.27.1",
     "react-native-material-menu": "^1.2.0",

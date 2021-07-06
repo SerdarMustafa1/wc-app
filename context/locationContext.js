@@ -13,6 +13,7 @@ const LocationContextProvider = ({ children }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [region, setRegion] = useState(null);
   const [hasLocationPermissions, setLocationPermission] = useState(false);
+  const [city, setCity] = useState();
 
   const LATITUDE_DELTA = 0.0922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -22,7 +23,9 @@ const LocationContextProvider = ({ children }) => {
 
   useEffect(() => {
     getLocation();
-  }, []);
+  }, [city]);
+
+  // console.log("location", location);
 
   useEffect(() => {
     if (location?.coords) {
@@ -45,6 +48,7 @@ const LocationContextProvider = ({ children }) => {
       }
 
       const last = await Location.getLastKnownPositionAsync();
+
       if (last) setLocation(last);
       else {
         const current = await Location.getCurrentPositionAsync({
@@ -52,13 +56,31 @@ const LocationContextProvider = ({ children }) => {
           // timeInterval: 1000, //this will poll for new data
         });
         setLocation(current);
+
+        let place = await Location.reverseGeocodeAsync({
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+        });
+        console.log("place", place);
+
+        setCity(place[0]?.city);
       }
+
+      let place = await Location.reverseGeocodeAsync({
+        latitude: location?.coords?.latitude,
+        longitude: location?.coords?.longitude,
+      });
+      console.log("place", place);
+
+      setCity(place[0]?.city);
     } catch (error) {
       console.log(error);
     }
   };
 
   // console.log("location ---", location?.coords);
+
+  console.log("city ===", city);
 
   return (
     <LocationContext.Provider
@@ -70,6 +92,7 @@ const LocationContextProvider = ({ children }) => {
         region,
         setRegion,
         hasLocationPermissions,
+        city,
       }}
     >
       {children}

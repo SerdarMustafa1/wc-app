@@ -6,11 +6,14 @@ import { Title, Button } from "react-native-paper";
 import mainContext from "../../context/mainContext";
 import Firebase from "../../Firebase";
 import loc from "../../utils/localization";
+import { useNavigation } from "@react-navigation/native";
 
 const ActionMenu = () => {
   const { currentUser } = Firebase.auth();
   const { inHome } = useContext(mainContext);
   const { signOutUser } = useContext(mainContext);
+
+  const navigation = useNavigation();
 
   let _menu = null;
 
@@ -67,8 +70,8 @@ const ActionMenu = () => {
         <MenuItem onPress={() => signOutUser()}>
           <Text style={{ fontWeight: "bold" }}>{loc.t("signout")}</Text>
         </MenuItem>
-        <MenuItem onPress={hideMenu} disabled>
-          Menu item 3
+        <MenuItem onPress={() => navigation.navigate("Page2")}>
+          <Text>Page 2</Text>
         </MenuItem>
       </Menu>
     </View>

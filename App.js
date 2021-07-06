@@ -42,6 +42,7 @@ const CombinedDarkTheme = {
 
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
+import GuideScreen from "./screens/GuideScreen/GuideScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import loc from "./utils/localization";
 import { disableExpoCliLogging } from "expo/build/logs/Logs";
@@ -183,6 +184,11 @@ const App = ({ navigation }) => {
                   name="Home"
                   component={HomeScreen}
                   options={{ headerShown: false }}
+                />
+                <AppStack.Screen
+                  name="Page2"
+                  component={GuideScreen}
+                  options={{ headerShown: true }}
                 />
               </>
             )}
