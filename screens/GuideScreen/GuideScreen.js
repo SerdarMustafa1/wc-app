@@ -6,6 +6,7 @@ import {
   View,
   TextInput,
   Text,
+  Button,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
@@ -89,9 +90,11 @@ const GuideScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.item}>
           <View style={{ marginBottom: 30 }}>
-            <Text>Location name, GPS address</Text>
+            <Text style={{ fontSize: 16, fontWeight: "700" }}>
+              Location name, GPS address
+            </Text>
           </View>
-          <Text>Description</Text>
+          <Text style={{ fontSize: 16, fontWeight: "700" }}>Description</Text>
           <FlatGrid
             itemDimension={150}
             data={searchOptions}
@@ -101,8 +104,22 @@ const GuideScreen = () => {
             spacing={10}
             renderItem={renderItem}
           />
-          <View style={{ marginBottom: 30 }}>
-            <Text>Location name, GPS address</Text>
+          <View
+            style={{
+              marginBottom: 30,
+              flex: 1,
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: "700" }}>
+              Modify Search
+            </Text>
+            <Button title="Main" />
+            <Button title="Map" />
+            <Text style={{ fontSize: 16, fontWeight: "700" }}>
+              Audio Instructions
+            </Text>
           </View>
         </View>
         {/* section for post mvp (nearby) */}
